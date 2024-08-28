@@ -64,6 +64,14 @@ jobs:
         run: |
           msbuild -m -p:Configuration=${{env.BUILD_CONFIGURATION}} -p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
 
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mhw-cs-plugin-loader-${{env.BUILD_CONFIGURATION}}
+          path: d:\a\SharpPluginLoader\SharpPluginLoader\x64\${{env.BUILD_CONFIGURATION}}\*
+          overwrite: true
+          if-no-files-found: error
+
       # TODO(Andoryuuta): Can't currently build solution directly due to build order issues + "Release" mode binaries expected on-disk for some build scripts.
       # - name: Build Solution
       #   working-directory: ${{env.GITHUB_WORKSPACE}}
