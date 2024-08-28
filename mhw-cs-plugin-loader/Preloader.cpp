@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <string>
+#include <debugapi.h>
 #include <thread>
 
 #include <wil/resource.h>
@@ -47,6 +48,7 @@ void open_console() {
 
 // Returns pointer to the IMAGE_LOAD_CONFIG_DIRECTORY64.SecurityCookie value.
 uint64_t* get_security_cookie_pointer() {
+    OutputDebugStringW(L"in get_security_cookie_pointer\n");
     auto image_base = (uint64_t)GetModuleHandle(NULL);
     IMAGE_DOS_HEADER* dos_header = (IMAGE_DOS_HEADER*)image_base;
     IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(image_base + dos_header->e_lfanew);
@@ -54,10 +56,12 @@ uint64_t* get_security_cookie_pointer() {
         auto load_config_directory = nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG];
         if (load_config_directory.VirtualAddress != 0 && load_config_directory.Size != 0) {
             IMAGE_LOAD_CONFIG_DIRECTORY64* load_config = (IMAGE_LOAD_CONFIG_DIRECTORY64*)(image_base + load_config_directory.VirtualAddress);
+            OutputDebugStringW(L"found a security cookie\n");
             return (uint64_t*)load_config->SecurityCookie;
         }
     }
 
+    OutputDebugStringW(L"no security cookie found\n");
     return nullptr;
 }
 
@@ -198,17 +202,22 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
 // binaries by detecting the first call to the hooked function _after_
 // the executable is unpacked in memory.
 void initialize_preloader() {
+    OutputDebugStringW(L"in initialize_preloader\n");
     auto& loader_config = preloader::LoaderConfig::get();
     if (loader_config.get_log_cmd()) {
         open_console();
     }
 
+    OutputDebugStringW(L"opened console\n");
+
     uint64_t* security_cookie = get_security_cookie_pointer();
     if (security_cookie == nullptr) {
+      OutputDebugStringW(L"no security cookie\n");
         dlog::error("[Preloader] Failed to get security cookie pointer from PE header!");
         return;
     }
 
+    OutputDebugStringW(L"found a security cookie\n");
     // Reset the processes' security cookie to the default value to make the
     // MSVC startup code to attempt to initalize it to a new value, which will 
     // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
@@ -218,4 +227,5 @@ void initialize_preloader() {
         reinterpret_cast<void*>(GetSystemTimeAsFileTime),
         reinterpret_cast<void*>(hooked_get_system_time_as_file_time)
     );
+    OutputDebugStringW(L"got system time hook\n");
 }

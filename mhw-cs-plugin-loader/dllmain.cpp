@@ -1,3 +1,4 @@
+#include <debugapi.h>
 #include <wil/resource.h>
 #include <wil/stl.h>
 #include <wil/win32_helpers.h>
@@ -7,6 +8,7 @@
 #include "LoaderConfig.h"
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    OutputDebugStringW(L"in dllmain\n");
     if (fdwReason == DLL_PROCESS_ATTACH) {
         // Only load the the mod loader DLL if winmm.dll has been loaded into the correct process.
         if (wil::GetModuleFileNameW<std::wstring>().contains(L"MonsterHunterWorld.exe")) {
