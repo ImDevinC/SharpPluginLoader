@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 #include <string>
 #include <cstring>
@@ -128,6 +129,15 @@ uintptr_t resolve_x86_relative_call(uintptr_t call_address) {
     return (call_address + 5) + *(int32_t*)(call_address + 1);
 }
 
+std::string bytes_to_string(const std::vector<BYTE>& bytes) {
+  auto out_stream = std::ostringstream();
+  for (SIZE_T i = 0; i < bytes.size(); i++) {
+    if (i > 0) out_stream << ",";
+    out_stream << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<const UINT32>(bytes[i]);
+  }
+  return out_stream.str();
+}
+
 // The hooked GetSystemTimeAsFileTime function.
 // This function is called in many places, one of them being the
 // `__security_init_cookie` function that is used to setup the security token(s)
@@ -166,7 +176,8 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
 
         byte data[10];
         std::memcpy(data, (void*)scrt_common_main_address, 10);
-        dlog::debug("[Preloader] scrt_common_main_address: {:x}", *data);
+        std::vector<byte> vec(data, data + sizeof(data) / sizeof(data[0]));
+        dlog::debug("[Preloader] scrt_common_main_address: %s", bytes_to_string(vec));
         // Hook the functions.
         g_scrt_common_main_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(scrt_common_main_address),
@@ -227,7 +238,7 @@ void initialize_preloader() {
     // MSVC startup code to attempt to initalize it to a new value, which will 
     // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
   
-   dlog::debug("[Preloader] security_cookie pointer: 0x{:X}")
+   dlog::debug("[Preloader] security_cookie pointer: 0x{:X}");
 
    DWORD old_protect;
    if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), PAGE_READWRITE, &old_protect)) {
