@@ -166,22 +166,32 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
 
         byte data[10];
         std::memcpy(data, (void*)scrt_common_main_address, 10);
-        dlog::debug("[Preloader] scrt_common_main_address: {:X}", *data);
+        dlog::debug("[Preloader] scrt_common_main_address: {:hhx}", *data);
         // Hook the functions.
         g_scrt_common_main_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(scrt_common_main_address),
             reinterpret_cast<void*>(hooked_scrt_common_main)
         );
+        std::memcpy(data, (void*)scrt_common_main_address, 10);
+        dlog::debug("[Preloader] hooked scrt_common_main_address: {:hhx}", *data);
 
+        std::memcpy(data, (void*)winmain_address, 10);
+        dlog::debug("[Preloader] winmain_address: {:hhx}", *data);
         g_win_main_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(winmain_address),
             reinterpret_cast<void*>(hooked_win_main)
         );
+        std::memcpy(data, (void*)winmain_address, 10);
+        dlog::debug("[Preloader] hooked winmain_address: {:hhx}", *data);
 
+        std::memcpy(data, (void*)mhmain_ctor_address, 10);
+        dlog::debug("[Preloader] mhmain_ctor_address: {:hhx}", *data);
         g_mh_main_ctor_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(mhmain_ctor_address),
             reinterpret_cast<void*>(hooked_mh_main_ctor)
         );
+        std::memcpy(data, (void*)mhmain_ctor_address, 10);
+        dlog::debug("[Preloader] hooked mhmain_ctor_address: {:hhx}", *data);
 
         // Unhook this function and call the original
         g_get_system_time_as_file_time_hook = {};
