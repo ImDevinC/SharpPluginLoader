@@ -241,7 +241,7 @@ void initialize_preloader() {
     // MSVC startup code to attempt to initalize it to a new value, which will 
     // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
   
-   dlog::debug("[Preloader] security_cookie pointer: 0x{:X}", security_cookie);
+   dlog::debug("[Preloader] security_cookie pointer: 0x{:X}", (void *)security_cookie);
 
    DWORD old_protect;
    if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), PAGE_READWRITE, &old_protect)) {
