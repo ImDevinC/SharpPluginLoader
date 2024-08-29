@@ -165,7 +165,7 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
         dlog::debug("[Preloader] Resolved address for sMhMain::ctor: 0x{:X}", mhmain_ctor_address);
 
         byte data[10];
-        std::memcpy(data, scrt_common_main_address, 10);
+        std::memcpy(data, (void*)scrt_common_main_address, 10);
         dlog::debug("[Preloader] scrt_common_main_address: {:X}", *data);
         // Hook the functions.
         g_scrt_common_main_hook = safetyhook::create_inline(
