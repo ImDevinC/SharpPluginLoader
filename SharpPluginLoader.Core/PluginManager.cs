@@ -51,6 +51,7 @@ namespace SharpPluginLoader.Core
 
         public PluginManager()
         {
+            Log.Debug("[PluginManager] Checking for plugins");
             _watcher = new FileSystemWatcher("nativePC/plugins/CSharp");
             _watcher.IncludeSubdirectories = true;
 
@@ -219,6 +220,8 @@ namespace SharpPluginLoader.Core
 
         public void LoadPlugins(string directory)
         {
+            var pp = Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories);
+            Log.Debug($"[LoadPlugins] Looking for plugins in {pp}");
             foreach (var pluginPath in Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories))
             {
                 if (IsPlugin(pluginPath))
