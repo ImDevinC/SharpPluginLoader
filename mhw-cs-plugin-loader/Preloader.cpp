@@ -2,7 +2,10 @@
 #include <cstdint>
 #include <string>
 #include <cstring>
+#include <sstream>
 #include <thread>
+#include <iomanip>
+#include <iostream>
 
 #include <wil/resource.h>
 #include <wil/stl.h>
