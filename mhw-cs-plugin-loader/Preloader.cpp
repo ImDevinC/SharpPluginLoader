@@ -217,17 +217,28 @@ void initialize_preloader() {
         open_console();
     }
 
-   // uint64_t* security_cookie = get_security_cookie_pointer();
-   // if (security_cookie == nullptr) {
-   //     dlog::error("[Preloader] Failed to get security cookie pointer from PE header!");
-   //     return;
-   // }
+   uint64_t* security_cookie = get_security_cookie_pointer();
+   if (security_cookie == nullptr) {
+       dlog::error("[Preloader] Failed to get security cookie pointer from PE header!");
+       return;
+   }
 
     // Reset the processes' security cookie to the default value to make the
     // MSVC startup code to attempt to initalize it to a new value, which will 
     // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
 
-   // *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+   DWORD old_protect;
+   if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), PAGE_READWRITE, &old_protect)) {
+     dlog::debug("[Preloader] Setting permissions (PAGE_READWRITE) on security_cookie memory failed");
+     return;
+   }
+
+   *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+
+   if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), old_protect, &old_protect)) {
+     dlog::debug("[Preloader] Restoring permissions on security_cookie memory failed");
+     return;
+   }
 
     g_get_system_time_as_file_time_hook = safetyhook::create_inline(
         reinterpret_cast<void*>(GetSystemTimeAsFileTime),
