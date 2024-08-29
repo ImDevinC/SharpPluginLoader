@@ -176,7 +176,7 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
         dlog::debug("[Preloader] hooked scrt_common_main_address: {:x}", *data);
 
         std::memcpy(data, (void*)winmain_address, 10);
-        dlog::debug("[Preloader] winmain_address: {:hhx}", *data);
+        dlog::debug("[Preloader] winmain_address: {:x}", *data);
         g_win_main_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(winmain_address),
             reinterpret_cast<void*>(hooked_win_main)
