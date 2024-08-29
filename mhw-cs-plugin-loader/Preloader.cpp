@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <string>
+#include <cstring>
 #include <thread>
 
 #include <wil/resource.h>
@@ -163,6 +164,9 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
         }
         dlog::debug("[Preloader] Resolved address for sMhMain::ctor: 0x{:X}", mhmain_ctor_address);
 
+        byte data[10];
+        std::memcpy(data, scrt_common_main_address, 10);
+        dlog::debug("[Preloader] scrt_common_main_address: {:X}", *data);
         // Hook the functions.
         g_scrt_common_main_hook = safetyhook::create_inline(
             reinterpret_cast<void*>(scrt_common_main_address),
@@ -203,16 +207,17 @@ void initialize_preloader() {
         open_console();
     }
 
-//    uint64_t* security_cookie = get_security_cookie_pointer();
-//    if (security_cookie == nullptr) {
-//        dlog::error("[Preloader] Failed to get security cookie pointer from PE header!");
-//        return;
-//    }
-//
-//    // Reset the processes' security cookie to the default value to make the
-//    // MSVC startup code to attempt to initalize it to a new value, which will 
-//    // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
-//    *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+   // uint64_t* security_cookie = get_security_cookie_pointer();
+   // if (security_cookie == nullptr) {
+   //     dlog::error("[Preloader] Failed to get security cookie pointer from PE header!");
+   //     return;
+   // }
+
+    // Reset the processes' security cookie to the default value to make the
+    // MSVC startup code to attempt to initalize it to a new value, which will 
+    // cause our hooked GetSystemTimeAsFileTime to be called pre-CRT init.
+
+   // *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
 
     g_get_system_time_as_file_time_hook = safetyhook::create_inline(
         reinterpret_cast<void*>(GetSystemTimeAsFileTime),
