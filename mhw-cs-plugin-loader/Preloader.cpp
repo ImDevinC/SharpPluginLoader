@@ -249,7 +249,7 @@ void initialize_preloader() {
      return;
    }
 
-   *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+   // *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
 
    if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), old_protect, &old_protect)) {
      dlog::debug("[Preloader] Restoring permissions on security_cookie memory failed");
