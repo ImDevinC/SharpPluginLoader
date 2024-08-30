@@ -12,8 +12,6 @@
 #include <wil/win32_helpers.h>
 #include <windows.h>
 
-#include <ntifs.h>
-
 #include <safetyhook/safetyhook.hpp>
 
 #include "AddressRepository.h"
