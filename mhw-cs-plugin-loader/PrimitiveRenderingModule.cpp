@@ -810,6 +810,8 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
     const auto& vs = chunk->get_file("/Resources/PrimitiveRenderingVS.hlsl");
     const auto& ps = chunk->get_file("/Resources/PrimitiveRenderingPS.hlsl");
 
+    ComPtr<ID3DBlob> error_blob;
+
     const auto load = [&](const Ref<FileSystemFile>& file, const char* target, ComPtr<ID3DBlob>& blob) {
         const auto result = D3DCompile(
             file->Contents.data(),
@@ -1090,7 +1092,7 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
 #endif
 
         error_blob.Reset();
-        HandleResultMsg(D3DCompile(
+        const auto result = D3DCompile(
             file->Contents.data(),
             file->size(),
             nullptr,
@@ -1102,7 +1104,8 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
             0,
             blob.GetAddressOf(),
             error_blob.GetAddressOf()
-        ), (char*)error_blob.Get()->GetBufferPointer());
+        );
+        HandleResultMsg(reuslt, (char*)error_blob.Get()->GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
