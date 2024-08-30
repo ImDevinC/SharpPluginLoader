@@ -810,8 +810,8 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
     const auto& vs = chunk->get_file("/Resources/PrimitiveRenderingVS.hlsl");
     const auto& ps = chunk->get_file("/Resources/PrimitiveRenderingPS.hlsl");
 
-    const auto load = [&](const Ref<FileSystemFile>& file, const char* target, ComPtr<ID3DBlob>& blob) {
-        HandleResult(D3DCompile(
+    const auto load = [&](const Ref<FileSystemFile>& file, const char* target, ComPtr<ID3DBlob>& blob) 
+        const auto result = D3DCompile(
             file->Contents.data(),
             file->size(),
             nullptr,
@@ -823,7 +823,8 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             0,
             blob.GetAddressOf(),
             nullptr
-         ), (char*)error_blob.Get()->GetBufferPointer());
+         );
+        HandleResultMsg(result, (char *)error_blob.Get()->GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
