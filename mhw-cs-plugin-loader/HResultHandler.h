@@ -12,7 +12,7 @@ public:
             std::ostringstream oss;
             oss << "HRESULT failed: 0x" << std::hex << hr << std::endl;
             //dlog::error("HRESULT failed: 0x{:lx} at {}:{}", hr, file, line);
-            dlog::error(oss);
+            dlog::error(oss.c_str());
             std::terminate();
         }
     }
