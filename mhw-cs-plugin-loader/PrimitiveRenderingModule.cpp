@@ -823,7 +823,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             0,
             blob.GetAddressOf(),
             nullptr
-        ));
+         ), (char*)error_blob.Get()->GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
