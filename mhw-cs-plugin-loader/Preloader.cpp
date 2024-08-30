@@ -222,6 +222,31 @@ void hooked_get_system_time_as_file_time(LPFILETIME lpSystemTimeAsFileTime) {
     g_get_system_time_as_file_time_hook.call<LPFILETIME>(lpSystemTimeAsFileTime);
 }
 
+static void set_security_cookie(uint64_t *cookie) {
+  static ULONG seed;
+  dlog::debug("[Preloader] Initializing security cookie {:p}", cookie);
+  if (!seed) {
+    seed = NtGetTickCount() ^ GetCurrentProcessId();
+  }
+  for (;;) {
+    if (*cookie == DEFAULT_SECURITY_COOKIE_16) {
+      dlog::debug("[Preloader] Found a 16bit cookie");
+      *cookie = RtlRandom(&seed) >> 16;
+    } else if (*cookie == DEFAULT_SECURITY_COOKIE_32) {
+      dlog::debug("[Preloader] Found a 32bit cookie");
+      *cookie = RtlRandom(&seed);
+#ifdef DEFAULT_SECURITY_COOKIE_64
+    } else if (*cookie == DEFAULT_SECURITY_COOKIE_64) {
+      dlog::debug("[Preloader] Found a 64bit cookie);
+      *cookie = RtlRandom(&seed);
+      *cookie ^= (ULONG_PTR)RtlRandom(&seed) << 16;
+#endif
+    } else {
+      break;
+    }
+  }
+}
+
 
 // This function is called from the loader-locked DllMain.
 // It does the bare-minimum to get control flow in the main thread
@@ -248,20 +273,21 @@ void initialize_preloader() {
   
    dlog::debug("[Preloader] security_cookie pointer: 0x{:p}", (void *)security_cookie);
 
-   DWORD old_protect;
-   if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), PAGE_READWRITE, &old_protect)) {
-     dlog::debug("[Preloader] Setting permissions (PAGE_READWRITE) on security_cookie memory failed");
-     return;
-   }
+   set_security_cookie(security_cookie);
+   //DWORD old_protect;
+   //if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), PAGE_READWRITE, &old_protect)) {
+   //  dlog::debug("[Preloader] Setting permissions (PAGE_READWRITE) on security_cookie memory failed");
+   //  return;
+   //}
 
-   uint64_t* security_cookie_complement = reinterpret_cast<uint64_t*>(0x144BF20E0);
-   *security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
-   *security_cookie_complement = ~MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+   //uint64_t* security_cookie_complement = reinterpret_cast<uint64_t*>(0x144BF20E0);
+   //*security_cookie = MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
+   //*security_cookie_complement = ~MSVC_DEFAULT_SECURITY_COOKIE_VALUE;
 
-   if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), old_protect, &old_protect)) {
-     dlog::debug("[Preloader] Restoring permissions on security_cookie memory failed");
-     return;
-   }
+   //if (!VirtualProtect((LPVOID)security_cookie, sizeof(security_cookie), old_protect, &old_protect)) {
+   //  dlog::debug("[Preloader] Restoring permissions on security_cookie memory failed");
+   //  return;
+   //}
 
     g_get_system_time_as_file_time_hook = safetyhook::create_inline(
         reinterpret_cast<void*>(GetSystemTimeAsFileTime),
