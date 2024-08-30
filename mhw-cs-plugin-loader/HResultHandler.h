@@ -7,7 +7,7 @@ class HResultHandler {
 public:
     static inline void Handle(HRESULT hr, const char* file, int line) {
         if (FAILED(hr)) {
-            dlog::error("HRESULT failed: 0x{:X} at {}:{}", hr, file, line);
+            dlog::error("HRESULT failed: 0x{:lx} at {}:{}", hr, file, line);
             std::terminate();
         }
     }
