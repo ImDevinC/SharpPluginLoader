@@ -826,7 +826,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             blob.GetAddressOf(),
             error_blob.GetAddressOf()
          );
-        HandleResultMsg(result, (char *)error_blob.Get()->GetBufferPointer());
+        HandleResultMsg(result, (char *)error_blob->GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
@@ -1105,7 +1105,7 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
             blob.GetAddressOf(),
             error_blob.GetAddressOf()
         );
-        HandleResultMsg(result, (char*)error_blob.Get()->GetBufferPointer());
+        HandleResultMsg(result, (char*)error_blob->GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
