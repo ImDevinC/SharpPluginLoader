@@ -827,7 +827,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             error_blob.GetAddressOf()
          );
         if error_blob != nullptr {
-          HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer());
+          HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer()));
         } else {
           HandleResult(result);
         }
@@ -1110,7 +1110,7 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
             error_blob.GetAddressOf()
         );
         if error_blob != nullptr {
-          HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer());
+          HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer()));
         } else {
           HandleResult(result);
         }
