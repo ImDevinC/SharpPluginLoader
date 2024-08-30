@@ -12,6 +12,8 @@
 #include <wil/win32_helpers.h>
 #include <windows.h>
 
+#include <ntifs.h>
+
 #include <safetyhook/safetyhook.hpp>
 
 #include "AddressRepository.h"
@@ -23,6 +25,12 @@
 #include "LoaderConfig.h"
 
 #pragma intrinsic(_ReturnAddress)
+
+#ifdef _WIN64
+#define DEFAULT_SECURITY_COOKIE_64  (((ULONGLONG)0x00002b99 << 32) | 0x2ddfa232)
+#endif
+#define DEFAULT_SECURITY_COOKIE_32  0xbb40e64e
+#define DEFAULT_SECURITY_COOKIE_16  (DEFAULT_SECURITY_COOKIE_32 >> 16)
 
 SafetyHookInline g_get_system_time_as_file_time_hook{};
 SafetyHookInline g_win_main_hook{};
@@ -226,7 +234,8 @@ static void set_security_cookie(uint64_t *cookie) {
   static ULONG seed;
   dlog::debug("[Preloader] Initializing security cookie {:p}", cookie);
   if (!seed) {
-    seed = NtGetTickCount() ^ GetCurrentProcessId();
+    //seed = NtGetTickCount() ^ GetCurrentProcessId();
+    seed = GetCurrentProcessId();
   }
   for (;;) {
     if (*cookie == DEFAULT_SECURITY_COOKIE_16) {
