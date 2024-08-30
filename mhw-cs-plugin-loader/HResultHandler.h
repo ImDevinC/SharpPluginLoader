@@ -2,12 +2,17 @@
 #include "Log.h"
 
 #include <intsafe.h>
+#include <string>
+#include <sstream>
 
 class HResultHandler {
 public:
     static inline void Handle(HRESULT hr, const char* file, int line) {
         if (FAILED(hr)) {
-            dlog::error("HRESULT failed: 0x{:lx} at {}:{}", hr, file, line);
+            std::ostringstream oss;
+            oss << "HRESULT failed: 0x" << std::hex << hr << std::endl;
+            //dlog::error("HRESULT failed: 0x{:lx} at {}:{}", hr, file, line);
+            dlog::error(oss);
             std::terminate();
         }
     }
