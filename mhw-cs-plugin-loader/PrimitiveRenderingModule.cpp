@@ -1088,7 +1088,8 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
         constexpr UINT compile_flags = 0;
 #endif
 
-        HandleResult(D3DCompile(
+        error_blob.Reset();
+        HandleResultMsg(D3DCompile(
             file->Contents.data(),
             file->size(),
             nullptr,
@@ -1099,8 +1100,8 @@ void PrimitiveRenderingModule::late_init_d3d12(D3DModule* d3dmodule, IDXGISwapCh
             compile_flags,
             0,
             blob.GetAddressOf(),
-            nullptr
-        ));
+            error_blob.GetAddressOf()
+        ), (char*)error_blob.GetBufferPointer());
     };
 
     load(vs, "vs_5_0", vs_blob);
