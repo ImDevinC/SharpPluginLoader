@@ -10,16 +10,17 @@ public:
     static inline void Handle(HRESULT hr, const char* file, int line) {
         if (FAILED(hr)) {
             std::ostringstream oss;
-            oss << "HRESULT failed: 0x" << std::hex << hr << std::endl;
-            //dlog::error("HRESULT failed: 0x{:lx} at {}:{}", hr, file, line);
-            dlog::error("Error: {:s}", oss.str());
+            oss << "0x" << std::hex << hr << std::endl;
+            dlog::error("HRESULT failed: {:s} at {}:{}", oss.str(), file, line);
             std::terminate();
         }
     }
 
     static inline void Handle(HRESULT hr, const char* file, int line, const char* msg) {
         if (FAILED(hr)) {
-            dlog::error("HRESULT failed: 0x{:X} at {}:{}", hr, file, line, msg);
+            std::ostringstream oss;
+            oss << "0x" << std::hex << hr << std::endl;
+            dlog::error("HRESULT failed: {:s} at {}:{}", oss.str(), file, line);
             dlog::error("Message: {}", msg);
             std::terminate();
         }
