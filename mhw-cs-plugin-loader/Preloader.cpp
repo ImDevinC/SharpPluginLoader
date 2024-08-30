@@ -261,7 +261,7 @@ ULONG WINAPI RtlRandom (PULONG seed)
 
 static void set_security_cookie(uint64_t *cookie) {
   static ULONG seed;
-  dlog::debug("[Preloader] Initializing security cookie {:p}", cookie);
+  dlog::debug("[Preloader] Initializing security cookie {:p}", *cookie);
   if (!seed) {
     //seed = NtGetTickCount() ^ GetCurrentProcessId();
     seed = GetCurrentProcessId();
@@ -275,7 +275,7 @@ static void set_security_cookie(uint64_t *cookie) {
       *cookie = RtlRandom(&seed);
 #ifdef DEFAULT_SECURITY_COOKIE_64
     } else if (*cookie == DEFAULT_SECURITY_COOKIE_64) {
-      dlog::debug("[Preloader] Found a 64bit cookie);
+      dlog::debug("[Preloader] Found a 64bit cookie");
       *cookie = RtlRandom(&seed);
       *cookie ^= (ULONG_PTR)RtlRandom(&seed) << 16;
 #endif
