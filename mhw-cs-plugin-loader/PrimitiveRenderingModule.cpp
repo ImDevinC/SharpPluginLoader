@@ -812,6 +812,11 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
     const auto& ps = chunk->get_file("/Resources/PrimitiveRenderingPS.hlsl");
 
     ComPtr<ID3DBlob> error_blob = nullptr;;
+#ifdef _DEBUG
+        constexpr UINT compile_flags = D3DCOMPILE_DEBUG;
+#else
+        constexpr UINT compile_flags = 0;
+#endif
 
     const auto load = [&](const Ref<FileSystemFile>& file, const char* target, ComPtr<ID3DBlob>& blob) {
         error_blob.Reset();
@@ -823,7 +828,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             nullptr,
             "main",
             target,
-            0,
+            compile_flags,
             0,
             blob.GetAddressOf(),
             error_blob.GetAddressOf()
@@ -837,8 +842,10 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
 
     dlog::debug("checking vs_5_0");
     load(vs, "vs_5_0", vs_blob);
+    dlog::debug("finished vs_5_0");
     dlog::debug("checking ps_5_0");
     load(ps, "ps_5_0", ps_blob);
+    dlog::debug("finished ps_5_0");
 
     HandleResult(d3dmodule->m_d3d11_device->CreateVertexShader(
         vs_blob->GetBufferPointer(),
