@@ -888,9 +888,15 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
     const auto& line_gs = chunk->get_file("/Resources/LineRenderingGS.hlsl");
     const auto& line_ps = chunk->get_file("/Resources/LineRenderingPS.hlsl");
 
+    dlog::debug("starting vs_5_0");
     load(line_vs, "vs_5_0", vs_blob);
+    dlog::debug("finished vs_5_0");
+    dlog::debug("starting gs_5_0");
     load(line_gs, "gs_5_0", gs_blob);
+    dlog::debug("finished gs_5_0");
+    dlog::debug("starting ps_5_0");
     load(line_ps, "ps_5_0", ps_blob);
+    dlog::debug("finished ps_5_0");
 
     HandleResult(d3dmodule->m_d3d11_device->CreateVertexShader(
         vs_blob->GetBufferPointer(),
