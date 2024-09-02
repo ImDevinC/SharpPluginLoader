@@ -828,14 +828,15 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             error_blob.GetAddressOf()
          );
         if (error_blob != nullptr) {
-          dlog::error(target)
           HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer()));
         } else {
           HandleResult(result);
         }
     };
 
+    dlog::debug("checking vs_5_0");
     load(vs, "vs_5_0", vs_blob);
+    dlog::debug("checking ps_5_0");
     load(ps, "ps_5_0", ps_blob);
 
     HandleResult(d3dmodule->m_d3d11_device->CreateVertexShader(
