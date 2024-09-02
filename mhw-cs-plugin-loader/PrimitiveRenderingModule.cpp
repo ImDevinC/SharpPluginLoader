@@ -814,7 +814,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
     ComPtr<ID3DBlob> error_blob = nullptr;;
 
     const auto load = [&](const Ref<FileSystemFile>& file, const char* target, ComPtr<ID3DBlob>& blob) {
-        error_blob.Reset()
+        error_blob.Reset();
         const auto result = D3DCompile(
             file->Contents.data(),
             file->size(),
