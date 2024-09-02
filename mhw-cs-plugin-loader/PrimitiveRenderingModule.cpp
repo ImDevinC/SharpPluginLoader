@@ -14,6 +14,7 @@
 #include "Config.h"
 #include "ChunkModule.h"
 #include "LoaderConfig.h"
+#include "Log.h"
 #include "NativePluginFramework.h"
 
 PrimitiveRenderingModule::PrimitiveRenderingModule() = default;
@@ -827,6 +828,7 @@ void PrimitiveRenderingModule::late_init_d3d11(D3DModule* d3dmodule) {
             error_blob.GetAddressOf()
          );
         if (error_blob != nullptr) {
+          dlog::error(target)
           HandleResultMsg(result, static_cast<const char*>(error_blob->GetBufferPointer()));
         } else {
           HandleResult(result);
