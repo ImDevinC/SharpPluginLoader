@@ -68,7 +68,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mhw-cs-plugin-loader-${{env.BUILD_CONFIGURATION}}
-          path: d:\a\SharpPluginLoader\SharpPluginLoader\x64\${{env.BUILD_CONFIGURATION}}\*
+          #path: d:\a\SharpPluginLoader\SharpPluginLoader\x64\${{env.BUILD_CONFIGURATION}}\*
+          path: d:\a\SharpPluginLoader
           overwrite: true
           if-no-files-found: error
 
