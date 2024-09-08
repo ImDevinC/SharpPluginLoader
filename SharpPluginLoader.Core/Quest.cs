@@ -168,7 +168,7 @@ namespace SharpPluginLoader.Core
                     Log.Debug($"Unknown quest end reason: {reason}");
                     break;
             }
-
+            Log.Debug($"Calling endQuestHook Original with values {questMgr}, {unk1}, {reason}, {unk3}");
             _endQuestHook.Original(questMgr, unk1, reason, unk3);
         }
 
