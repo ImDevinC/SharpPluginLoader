@@ -148,28 +148,28 @@ namespace SharpPluginLoader.Core
             _departOnQuestHook.Original(questMgr, unk);
         }
 
-        private static void EndQuestHook(nint questMgr, bool unk1, QuestEndReason reason, byte unk3)
+        private static void EndQuestHook(nint questMgr, bool unk1, int frames, byte unk3)
         {
-            switch (reason)
-            {
-                case QuestEndReason.Complete:
-                {
-                    foreach (var plugin in PluginManager.Instance.GetPlugins(p => p.OnQuestComplete))
-                        plugin.OnQuestComplete(CurrentQuestId);
-                    break;
-                }
-                case QuestEndReason.Fail:
-                {
-                    foreach (var plugin in PluginManager.Instance.GetPlugins(p => p.OnQuestFail))
-                        plugin.OnQuestFail(CurrentQuestId);
-                    break;
-                }
-                default:
-                    Log.Debug($"Unknown quest end reason: {reason}");
-                    break;
-            }
-            Log.Debug($"Calling endQuestHook Original with values {questMgr}, {unk1}, {reason}, {unk3}");
-            _endQuestHook.Original(questMgr, unk1, reason, unk3);
+            //switch (reason)
+            //{
+            //    case QuestEndReason.Complete:
+            //    {
+            //        foreach (var plugin in PluginManager.Instance.GetPlugins(p => p.OnQuestComplete))
+            //            plugin.OnQuestComplete(CurrentQuestId);
+            //        break;
+            //    }
+            //    case QuestEndReason.Fail:
+            //    {
+            //        foreach (var plugin in PluginManager.Instance.GetPlugins(p => p.OnQuestFail))
+            //            plugin.OnQuestFail(CurrentQuestId);
+            //        break;
+            //    }
+            //    default:
+            //        Log.Debug($"Unknown quest end reason: {reason}");
+            //        break;
+            //}
+            Log.Debug($"Calling endQuestHook Original with values {questMgr}, {unk1}, {frames}, {unk3}");
+            _endQuestHook.Original(questMgr, unk1, frames, unk3);
         }
 
         private static Hook<AcceptQuest> _acceptQuestHook = null!;
@@ -189,7 +189,7 @@ namespace SharpPluginLoader.Core
         private delegate void ReturnFromQuest(nint questMgr);
         private delegate void CancelQuest(nint questMgr);
         private delegate void DepartOnQuest(nint questMgr, bool unk);
-        private delegate void EndQuest(nint questMgr, bool unk1, QuestEndReason reason, byte unk3);
+        private delegate void EndQuest(nint questMgr, bool unk1, int frames, byte unk3);
 
         private enum QuestEndReason : uint
         {
