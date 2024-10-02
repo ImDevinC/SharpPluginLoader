@@ -222,7 +222,7 @@ namespace SharpPluginLoader.Core.Entities
             foreach (var plugin in PluginManager.Instance.GetPlugins(p => p.OnMonsterDeath))
                 plugin.OnMonsterDeath(monster);
 
-            _monsterDieHook.Original(instance, ai);
+//            _monsterDieHook.Original(instance, ai);
         }
 
         private static void MonsterDtorHook(nint instance)
